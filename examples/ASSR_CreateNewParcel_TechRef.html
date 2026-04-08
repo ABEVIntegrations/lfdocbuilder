@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASSR_CreateNewParcel — Technical Reference</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --blue-mid: #bfdbfe;
+      --green: #15803d;
+      --green-light: #f0fdf4;
+      --green-mid: #86efac;
+      --amber: #b45309;
+      --amber-light: #fffbeb;
+      --red: #dc2626;
+      --red-light: #fef2f2;
+      --slate: #475569;
+      --slate-light: #f8fafc;
+      --purple: #7c3aed;
+      --purple-light: #f5f3ff;
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --text-2: #334155;
+      --text-3: #64748b;
+      --text-4: #94a3b8;
+      --border: #e2e8f0;
+      --border-light: #f1f5f9;
+      --radius: 10px;
+      --radius-sm: 6px;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --font: 'DM Sans', system-ui, sans-serif;
+      --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 4px 12px rgba(15,23,42,0.04);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14.5px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+
+    /* ── Topbar ── */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 52px; display: flex; align-items: center; padding: 0 28px; gap: 14px;
+      background: rgba(255,255,255,0.94); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-logo { font-weight: 700; font-size: 14px; color: var(--text); letter-spacing: -0.02em; }
+    .topbar-logo span { color: var(--blue); }
+    .topbar-sep { width: 1px; height: 18px; background: var(--border); }
+    .topbar-wf { font-size: 12.5px; font-family: var(--mono); color: var(--text-3); }
+    .topbar-doc { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: var(--blue-light); color: var(--blue); padding: 3px 9px; border-radius: 999px; }
+    .topbar-right { margin-left: auto; font-size: 11.5px; color: var(--text-4); }
+
+    /* ── Layout ── */
+    .layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1300px; margin: 0 auto; padding-top: 52px; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: sticky; top: 52px; height: calc(100vh - 52px);
+      overflow-y: auto; padding: 28px 0 40px;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+      scrollbar-width: thin;
+    }
+    .sb-section { margin-bottom: 24px; }
+    .sb-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-4); padding: 0 20px; margin-bottom: 4px;
+    }
+    .sb-label.blue { color: var(--blue); }
+    .sb-label.amber { color: var(--amber); }
+    a.sb-link {
+      display: block; padding: 6px 20px; font-size: 13px; color: var(--text-3);
+      text-decoration: none; border-left: 2px solid transparent;
+      transition: all 0.1s;
+    }
+    a.sb-link:hover { color: var(--text); background: var(--bg); }
+    a.sb-link.active { color: var(--blue); border-left-color: var(--blue); background: var(--blue-light); }
+
+    /* ── Main ── */
+    .main { padding: 44px 52px; max-width: 860px; }
+
+    /* ── Glance card ── */
+    .glance {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow); margin-bottom: 40px;
+    }
+    .glance-item {
+      padding: 20px 22px;
+      border-right: 1px solid var(--border);
+    }
+    .glance-item:last-child { border-right: none; }
+    .gl-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-4); margin-bottom: 5px; }
+    .gl-val { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.35; }
+    .gl-val.mono { font-family: var(--mono); font-size: 12px; }
+
+    /* ── Section headings ── */
+    .sec-head {
+      display: flex; align-items: center; gap: 12px;
+      margin: 52px 0 24px; padding-bottom: 14px;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .sec-head:first-of-type { margin-top: 0; }
+    .sec-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 999px;
+    }
+    .sec-tag.blue { background: var(--blue-light); color: var(--blue); }
+    .sec-tag.amber { background: var(--amber-light); color: var(--amber); }
+    .sec-head h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+
+    h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 32px 0 10px; }
+    h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-4); margin: 24px 0 8px; }
+    p { color: var(--text-2); margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── Callouts ── */
+    .callout {
+      padding: 14px 18px; border-radius: var(--radius-sm); margin: 16px 0;
+      border-left: 3px solid; display: flex; gap: 10px; align-items: flex-start;
+    }
+    .ci { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .cb { flex: 1; }
+    .ct { font-weight: 600; font-size: 13.5px; margin-bottom: 3px; }
+    .callout p { font-size: 13.5px; margin: 0; }
+    .callout.info { background: var(--blue-light); border-color: var(--blue); }
+    .callout.info .ct { color: var(--blue); }
+    .callout.info p { color: #1e40af; }
+    .callout.warn { background: var(--amber-light); border-color: var(--amber); }
+    .callout.warn .ct { color: var(--amber); }
+    .callout.warn p { color: #78350f; }
+    .callout.ok { background: var(--green-light); border-color: var(--green); }
+    .callout.ok .ct { color: var(--green); }
+    .callout.ok p { color: #14532d; }
+    .callout.err { background: var(--red-light); border-color: var(--red); }
+    .callout.err .ct { color: var(--red); }
+    .callout.err p { color: #7f1d1d; }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+    th { text-align: left; padding: 9px 13px; background: var(--bg); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-4); }
+    td { padding: 9px 13px; border-bottom: 1px solid var(--border-light); color: var(--text-2); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    td:first-child { color: var(--text); font-weight: 500; }
+    td code { font-size: 11.5px; }
+    table { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+
+    /* ── Code ── */
+    code { font-family: var(--mono); font-size: 12px; background: var(--bg); padding: 2px 5px; border-radius: 4px; color: var(--purple); border: 1px solid var(--border); }
+    pre { background: #0d1117; border-radius: var(--radius-sm); padding: 18px 20px; overflow-x: auto; margin: 14px 0; }
+    pre code { background: none; border: none; padding: 0; color: #c9d1d9; font-size: 12.5px; white-space: pre; }
+    pre .c { color: #8b949e; }
+    pre .k { color: #ff7b72; }
+    pre .s { color: #a5d6ff; }
+    pre .v { color: #ffa657; }
+    pre .p { color: #c9d1d9; }
+
+    /* ── Badges ── */
+    .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; }
+    .badge.on { background: var(--green-light); color: var(--green); }
+    .badge.off { background: var(--red-light); color: var(--red); }
+    .badge.neutral { background: var(--bg); color: var(--text-3); border: 1px solid var(--border); }
+    .badge.blue { background: var(--blue-light); color: var(--blue); }
+
+    /* ── Activity tree ── */
+    .tree { margin: 16px 0; font-size: 13.5px; }
+    .tn {
+      padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface);
+      border: 1px solid var(--border); margin-bottom: 5px; display: flex; gap: 9px; align-items: flex-start;
+    }
+    .tn.branch { border-left: 3px solid var(--blue-mid); background: var(--blue-light); }
+    .tn.branch.green { border-left-color: var(--green-mid); background: var(--green-light); }
+    .tn.branch.else { border-left-color: #cbd5e1; background: var(--slate-light); }
+    .tn.disabled { opacity: 0.45; }
+    .ti { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .tc { flex: 1; }
+    .tn-name { font-weight: 600; color: var(--text); }
+    .tn-type { font-size: 11.5px; color: var(--text-4); margin-top: 1px; }
+    .tn-detail { font-size: 13px; color: var(--text-2); margin-top: 5px; line-height: 1.55; }
+    .tc-kids { margin-left: 26px; margin-top: 5px; border-left: 2px solid var(--border); padding-left: 14px; }
+
+    /* ── Parameter pills ── */
+    .params { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }
+    .param {
+      display: flex; align-items: flex-start; gap: 14px; padding: 12px 16px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    }
+    .param-name { font-family: var(--mono); font-size: 12px; color: var(--purple); font-weight: 500; min-width: 160px; flex-shrink: 0; padding-top: 1px; }
+    .param-body { flex: 1; }
+    .param-desc { font-size: 13.5px; color: var(--text-2); }
+    .param-meta { font-size: 11.5px; color: var(--text-4); margin-top: 2px; }
+
+    /* ── Folder tree ── */
+    .ftree {
+      background: #0d1117; border-radius: var(--radius); padding: 22px 24px;
+      font-family: var(--mono); font-size: 12.5px; color: #8b949e; line-height: 2; margin: 14px 0;
+    }
+    .ftree .root { color: #ffa657; font-weight: 600; }
+    .ftree .br { color: #30363d; }
+    .ftree .fd { color: #c9d1d9; }
+    .ftree .fx { color: #f85149; }
+    .ftree .note { color: #6e7681; font-size: 11px; margin-left: 6px; font-family: var(--font); }
+
+    /* ── Rights table ── */
+    .rights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+    .rights-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 14px 16px;
+    }
+    .rights-folder { font-weight: 600; font-size: 14px; color: var(--text); margin-bottom: 6px; }
+    .rights-trustee { font-size: 12px; color: var(--text-3); }
+    .rights-status { font-size: 11px; margin-top: 5px; }
+    .rights-status.deny { color: var(--red); }
+    .rights-status.inherit { color: var(--green); }
+
+    /* ── Troubleshooting ── */
+    .trouble-item { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid var(--border-light); }
+    .trouble-item:last-child { border-bottom: none; }
+    .trouble-q { font-weight: 600; font-size: 15px; color: var(--text); margin-bottom: 8px; display: flex; gap: 10px; align-items: flex-start; }
+    .trouble-q::before { content: 'Q'; font-size: 11px; font-weight: 700; background: var(--amber-light); color: var(--amber); padding: 2px 7px; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+    .trouble-a { font-size: 14px; color: var(--text-2); padding-left: 34px; }
+    .trouble-a ul { margin: 8px 0 0 18px; }
+    .trouble-a li { margin-bottom: 5px; }
+
+    /* ── Footer ── */
+    .footer { margin-top: 72px; padding-top: 22px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-4); display: flex; justify-content: space-between; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">LF<span>Docs</span></div>
+  <div class="topbar-sep"></div>
+  <div class="topbar-wf">ASSR_CreateNewParcel</div>
+  <div class="topbar-doc">Technical Reference</div>
+  <div class="topbar-right">Admin Guide · r-xxxxxxxx</div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">Overview</div>
+      <a class="sb-link" href="#glance">At a Glance</a>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label blue">Workflow Configuration</div>
+      <a class="sb-link" href="#meta">Metadata</a>
+      <a class="sb-link" href="#trigger">Trigger &amp; Parameters</a>
+      <a class="sb-link" href="#activities">Activity Map</a>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label blue">Reference</div>
+      <a class="sb-link" href="#tokens">Token Inventory</a>
+      <a class="sb-link" href="#fields">Field Inventory</a>
+      <a class="sb-link" href="#folders">Folder Structure</a>
+      <a class="sb-link" href="#permissions">Permissions Model</a>
+      <a class="sb-link" href="#email">Email Notifications</a>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label amber">Troubleshooting</div>
+      <a class="sb-link" href="#ts-noparcel">Parcel Exists Error</a>
+      <a class="sb-link" href="#ts-nofolder">Folder Not Created</a>
+      <a class="sb-link" href="#ts-perms">Permission Problems</a>
+      <a class="sb-link" href="#ts-email">Email Not Received</a>
+      <a class="sb-link" href="#ts-params">Bad Input Params</a>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- GLANCE -->
+    <div class="glance" id="glance">
+      <div class="glance-item">
+        <div class="gl-label">Workflow</div>
+        <div class="gl-val">ASSR_CreateNewParcel</div>
+      </div>
+      <div class="glance-item">
+        <div class="gl-label">Status</div>
+        <div class="gl-val"><span class="badge on">Active</span></div>
+      </div>
+      <div class="glance-item">
+        <div class="gl-label">Trigger</div>
+        <div class="gl-val">Called by parent workflow</div>
+      </div>
+      <div class="glance-item">
+        <div class="gl-label">Repository</div>
+        <div class="gl-val mono">r-xxxxxxxx</div>
+      </div>
+      <div class="glance-item">
+        <div class="gl-label">Activities</div>
+        <div class="gl-val">~21 activities</div>
+      </div>
+      <div class="glance-item">
+        <div class="gl-label">Last Modified</div>
+        <div class="gl-val">June 30, 2025</div>
+      </div>
+    </div>
+
+    <!-- METADATA -->
+    <div class="sec-head" id="meta">
+      <span class="sec-tag blue">Configuration</span>
+      <h2>Workflow Metadata</h2>
+    </div>
+
+    <table>
+      <tbody>
+        <tr><td>Workflow Name</td><td><code>ASSR_CreateNewParcel</code></td></tr>
+        <tr><td>Workflow UUID</td><td><code>b1d800df-a879-46ac-9841-27a205c4369d</code></td></tr>
+        <tr><td>Canvas ID</td><td><code>b30c0102-8197-4e73-abd0-1a0f88768f77</code></td></tr>
+        <tr><td>Export Version</td><td>11.2.2604.1003</td></tr>
+        <tr><td>Designer Version</td><td>11.0.0.138</td></tr>
+        <tr><td>Enabled</td><td><span class="badge on">True</span></td></tr>
+        <tr><td>Starting Mode</td><td><code>ExpectsStartingEntry</code> — accepts entry context; <code>AllowProcessMessageStart="true"</code> — can be invoked by a parent workflow</td></tr>
+        <tr><td>Business Process</td><td><span class="badge off">Disabled</span></td></tr>
+        <tr><td>Schedules</td><td>None — this is a sub-workflow, not scheduled</td></tr>
+        <tr><td>Created</td><td>August 26, 2024</td></tr>
+        <tr><td>Last Modified</td><td>June 30, 2025</td></tr>
+        <tr><td>Tenant ID</td><td><code>f6871366-6800-0000-0000-000000000000</code></td></tr>
+        <tr><td>Author</td><td>SYSTEM (Laserfiche Cloud)</td></tr>
+        <tr><td>Repository Profile UUID</td><td><code>b1d800df-a883-4107-abc0-3162a61f5627</code></td></tr>
+        <tr><td>Repository Name</td><td>r-xxxxxxxx (r-xxxxxxxx.laserfiche.com)</td></tr>
+      </tbody>
+    </table>
+
+    <!-- TRIGGER + PARAMS -->
+    <div class="sec-head" id="trigger">
+      <span class="sec-tag blue">Configuration</span>
+      <h2>Trigger &amp; Input Parameters</h2>
+    </div>
+
+    <div class="callout info">
+      <div class="ci">🔗</div>
+      <div class="cb">
+        <div class="ct">Sub-workflow — no schedule</div>
+        <p>This workflow has zero starting rules (schedules). It is designed to be called from a parent workflow or a Laserfiche Form via <code>AllowProcessMessageStart="true"</code>. It will not run on its own.</p>
+      </div>
+    </div>
+
+    <h3>Input Parameters</h3>
+    <p>All six parameters are of type <code>String</code>, single-valued, and passed in from the calling workflow. They are all available as tokens throughout the workflow.</p>
+
+    <div class="params">
+      <div class="param">
+        <div class="param-name">%(parcelID)</div>
+        <div class="param-body">
+          <div class="param-desc">The Section-Block-Lot identifier for the parcel. Used in the folder name, metadata assignment, and email notification.</div>
+          <div class="param-meta">UUID: <code>3486331c-6682-4b38-91b8-2e8b160c070d</code> · Style: InputFromWorkflow</div>
+        </div>
+      </div>
+      <div class="param">
+        <div class="param-name">%(streetNumber)</div>
+        <div class="param-body">
+          <div class="param-desc">The building/house number. Combined with streetAddress to form the folder display name and StreetNumber metadata field.</div>
+          <div class="param-meta">UUID: <code>8698494a-ff9d-464a-8d5a-12433190ddaf</code></div>
+        </div>
+      </div>
+      <div class="param">
+        <div class="param-name">%(streetAddress)</div>
+        <div class="param-body">
+          <div class="param-desc">The street name (without number). Used in the folder path hierarchy and the StreetName metadata field on the Properties template.</div>
+          <div class="param-meta">UUID: <code>7c56de20-5d96-4845-a2e0-f99a54bdf4c4</code></div>
+        </div>
+      </div>
+      <div class="param">
+        <div class="param-name">%(streetLetter)</div>
+        <div class="param-body">
+          <div class="param-desc">Alphabetical grouping letter (A–Z). Determines which top-level letter subfolder under <code>\Parcels\</code> the parcel lands in.</div>
+          <div class="param-meta">UUID: <code>78a257c9-1413-40f4-9747-3f7c69c68e52</code></div>
+        </div>
+      </div>
+      <div class="param">
+        <div class="param-name">%(emailAddress)</div>
+        <div class="param-body">
+          <div class="param-desc">The recipient for completion/failure email notifications. Passed in by the calling workflow or form.</div>
+          <div class="param-meta">UUID: <code>77f89865-decc-4ba5-8994-dad2b4698ff8</code> · Note: referenced in parameter definition but the Email activities hard-code to <code>email@email.com</code> — see Email section.</div>
+        </div>
+      </div>
+      <div class="param">
+        <div class="param-name">%(linkedParcelEntryID)</div>
+        <div class="param-body">
+          <div class="param-desc">Optional internal Laserfiche entry ID to link this parcel to an existing record. Accepted as input but not currently consumed in any activity.</div>
+          <div class="param-meta">UUID: <code>bd3b103e-9ab4-4dbd-b890-f3acb9083341</code></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY MAP -->
+    <div class="sec-head" id="activities">
+      <span class="sec-tag blue">Configuration</span>
+      <h2>Activity Map</h2>
+    </div>
+    <p>Full recursive execution tree in order. All activities use profile <code>b1d800df-a883-4107-abc0-3162a61f5627</code> (r-xxxxxxxx) unless noted.</p>
+
+    <div class="tree">
+
+      <div class="tn">
+        <div class="ti">🏷️</div>
+        <div class="tc">
+          <div class="tn-name">Create Tokens</div>
+          <div class="tn-type">Create / Set Token — <code>CreateTokenActivityProxy</code></div>
+          <div class="tn-detail">Initializes <code>tokFolders</code> as an empty multi-value string token (append mode). This token exists but is not consumed by any downstream activity in the current version — likely reserved for future use or debugging.</div>
+        </div>
+      </div>
+
+      <div class="tn">
+        <div class="ti">🔍</div>
+        <div class="tc">
+          <div class="tn-name">Search for SBL in Inactive</div>
+          <div class="tn-type">Search Repository (Cloud) — <code>SearchRepositoryCloudActivityProxy</code></div>
+          <div class="tn-detail">
+            Duplicate guard — checks whether the parcel already exists in the inactive archive.<br>
+            Conditions (AND logic):<br>
+            • <code>EntryPath StartsWith \Parcels\Z - INACTIVE BY SBL</code><br>
+            • <code>Template = Properties</code><br>
+            • <code>EntryType = Folder</code><br>
+            • <code>ParcelID = %(parcelID)</code><br>
+            Max results: 1. Output: Result Count token used by next step.
+          </div>
+        </div>
+      </div>
+
+      <div class="tn">
+        <div class="ti">🔀</div>
+        <div class="tc">
+          <div class="tn-name">Conditional Decision</div>
+          <div class="tn-type">Conditional Branch — <code>IfElseConditionProxy</code></div>
+          <div class="tn-detail">Routes based on whether the SBL was found in the inactive archive. Two branches evaluated in order.</div>
+        </div>
+      </div>
+
+      <div class="tc-kids">
+
+        <!-- Branch 1: Parcel Does Not Exist -->
+        <div class="tn branch green">
+          <div class="ti">➡️</div>
+          <div class="tc">
+            <div class="tn-name">Branch 1: Parcel Does Not Exist <span class="badge on" style="vertical-align:middle">Happy Path</span></div>
+            <div class="tn-detail">Fires when <code>Search for SBL in Inactive → Result Count = 0</code>. All creation activities run under this branch.</div>
+          </div>
+        </div>
+
+        <div class="tc-kids">
+
+          <div class="tn">
+            <div class="ti">➕</div>
+            <div class="tc">
+              <div class="tn-name">Create Parcel Folder - LIVE</div>
+              <div class="tn-type">Create Entry — <code>CreateEntryActivityProxy</code> · Key: <code>b30c0102-81e3-44bd</code></div>
+              <div class="tn-detail">
+                Creates the root parcel folder.<br>
+                <strong>Name:</strong> <code>%(streetNumber) %(streetAddress) %(parcelID)</code><br>
+                <strong>Path:</strong> <code>\Parcels\%(streetLetter)\%(streetAddress)</code> (Validation: <code>CreateIt</code>)<br>
+                <strong>Type:</strong> Folder · Volume: UseParentVolume<br>
+                Output token: <code>CreateParcelFolderLIVE_OutputEntry_ID</code> and <code>CreateParcelFolderLIVE_OutputEntry_FullPath</code> — used by all subsequent activities.
+              </div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">📝</div>
+            <div class="tc">
+              <div class="tn-name">Assign Field Values To Parcel - Live</div>
+              <div class="tn-type">Assign Template — <code>AssignTemplateActivityProxy</code></div>
+              <div class="tn-detail">
+                Applies the <strong>Properties</strong> template to the new parcel folder (<code>Action="AssignByName"</code>).<br>
+                Fields written:<br>
+                • <code>ParcelID</code> ← <code>%(parcelID)</code><br>
+                • <code>ParcelStatus</code> ← <code>Active</code> (hardcoded)<br>
+                • <code>StreetName</code> ← <code>%(streetAddress)</code><br>
+                • <code>StreetNumber</code> ← <code>%(streetNumber)</code><br>
+                Bound to: <code>Create Parcel Folder - LIVE → OutputEntry</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">➕</div>
+            <div class="tc">
+              <div class="tn-name">Create Assessor Folder</div>
+              <div class="tn-type">Create Entry — Folder named "Assessor"</div>
+              <div class="tn-detail">Path: <code>%(CreateParcelFolderLIVE_OutputEntry_FullPath)</code> (CreateIt)</div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">🔒</div>
+            <div class="tc">
+              <div class="tn-name">Remove Read Only - Assessor</div>
+              <div class="tn-type">Assign Rights — <code>AssignRightsActivityProxy</code></div>
+              <div class="tn-detail">Adds a DENY ACE (Ace=3) for trustee <strong>"Read Only"</strong> on the Assessor folder with all 20 rights set to <code>Access="false"</code>. Inheritable. This explicitly blocks the Read Only group from accessing this subfolder even if they have access to the parent parcel folder.</div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">➕</div>
+            <div class="tc">
+              <div class="tn-name">Create Building Folder</div>
+              <div class="tn-type">Create Entry — Folder named "Building"</div>
+              <div class="tn-detail">Path: <code>%(CreateParcelFolderLIVE_OutputEntry_FullPath)</code> · No rights modification — inherits parent permissions.</div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">➕</div>
+            <div class="tc">
+              <div class="tn-name">Create Engineering Folder</div>
+              <div class="tn-type">Create Entry — Folder named "Engineering"</div>
+              <div class="tn-detail">Path: <code>%(CreateParcelFolderLIVE_OutputEntry_FullPath)</code></div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">🔒</div>
+            <div class="tc">
+              <div class="tn-name">Remove Rights - Engineering</div>
+              <div class="tn-type">Assign Rights — DENY ACE for "Read Only" group</div>
+              <div class="tn-detail">Same deny pattern as Assessor. All 20 rights denied, inheritable. Bound to Create Engineering Folder OutputEntry.</div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">➕</div>
+            <div class="tc">
+              <div class="tn-name">Create Photos Folder</div>
+              <div class="tn-type">Create Entry — Folder named "Photos"</div>
+              <div class="tn-detail">Path: <code>%(CreateParcelFolderLIVE_OutputEntry_FullPath)</code></div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">🔒</div>
+            <div class="tc">
+              <div class="tn-name">Remove Rights - Photos</div>
+              <div class="tn-type">Assign Rights — DENY ACE for "Read Only" group</div>
+              <div class="tn-detail">Same deny pattern. Bound to Create Photos Folder OutputEntry.</div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">➕</div>
+            <div class="tc">
+              <div class="tn-name">Create Planning Folder</div>
+              <div class="tn-type">Create Entry — Folder named "Planning"</div>
+              <div class="tn-detail">Path: <code>%(CreateParcelFolderLIVE_OutputEntry_FullPath)</code></div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">🔒</div>
+            <div class="tc">
+              <div class="tn-name">Remove Rights - Planning</div>
+              <div class="tn-type">Assign Rights — DENY ACE for "Read Only" group</div>
+              <div class="tn-detail">Same deny pattern. Bound to Create Planning Folder OutputEntry.</div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">➕</div>
+            <div class="tc">
+              <div class="tn-name">Create Tax Bills Folder</div>
+              <div class="tn-type">Create Entry — Folder named "Tax Bills"</div>
+              <div class="tn-detail">Path: <code>%(CreateParcelFolderLIVE_OutputEntry_FullPath)</code> · No rights modification — inherits parent permissions.</div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">➕</div>
+            <div class="tc">
+              <div class="tn-name">Create Water Folder</div>
+              <div class="tn-type">Create Entry — Folder named "Water"</div>
+              <div class="tn-detail">Path: <code>%(CreateParcelFolderLIVE_OutputEntry_FullPath)</code></div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">🔒</div>
+            <div class="tc">
+              <div class="tn-name">Remove Rights - Water</div>
+              <div class="tn-type">Assign Rights — DENY ACE for "Read Only" group</div>
+              <div class="tn-detail">Same deny pattern. Bound to Create Water Folder OutputEntry.</div>
+            </div>
+          </div>
+
+          <div class="tn">
+            <div class="ti">📧</div>
+            <div class="tc">
+              <div class="tn-name">Email - Parcel Created</div>
+              <div class="tn-type">Send Email — <code>EmailSequenceProxy</code> · <span class="badge on">Enabled</span></div>
+              <div class="tn-detail">
+                <strong>To:</strong> <code>email@email.com</code> (hardcoded)<br>
+                <strong>Subject:</strong> <code>Parcel Created! %(parcelID)</code><br>
+                <strong>Body:</strong> Includes parcelID, streetNumber, streetAddress, and a direct link to the new folder using <code>%(CreateParcelFolderLIVE_OutputEntry_ID)</code>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /Branch 1 children -->
+
+        <!-- Branch 2: Parcel Exists -->
+        <div class="tn branch else">
+          <div class="ti">➡️</div>
+          <div class="tc">
+            <div class="tn-name">Branch 2: Parcel Exists <span class="badge off" style="vertical-align:middle">Error Path</span></div>
+            <div class="tn-detail">Fires when <code>Search for SBL in Inactive → Result Count &gt; 0</code>. No folder creation occurs.</div>
+          </div>
+        </div>
+
+        <div class="tc-kids">
+          <div class="tn">
+            <div class="ti">📧</div>
+            <div class="tc">
+              <div class="tn-name">Send Email - Parcel Not Created</div>
+              <div class="tn-type">Send Email — <code>EmailSequenceProxy</code> · <span class="badge on">Enabled</span></div>
+              <div class="tn-detail">
+                <strong>To:</strong> (empty — no direct recipient)<br>
+                <strong>BCC:</strong> <code>email@email.com</code><br>
+                <strong>Subject:</strong> <code>Parcel Created! %(parcelID)</code> ⚠️ misleading — subject says "Created" but body says "NOT created"<br>
+                <strong>Body:</strong> "Your parcel has NOT been created because it already exists! Parcel ID: %(parcelID) %(streetNumber) %(streetAddress)"
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /Conditional Decision children -->
+
+    </div><!-- /tree -->
+
+    <!-- TOKENS -->
+    <div class="sec-head" id="tokens">
+      <span class="sec-tag blue">Reference</span>
+      <h2>Token Inventory</h2>
+    </div>
+
+    <table>
+      <thead><tr><th>Token</th><th>Source</th><th>Multi?</th><th>Used By</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>parcelID</code></td>
+          <td>Input parameter</td>
+          <td>No</td>
+          <td>Search for SBL, Create Parcel Folder, Assign Fields, Email activities</td>
+          <td>Core identifier — used throughout</td>
+        </tr>
+        <tr>
+          <td><code>streetNumber</code></td>
+          <td>Input parameter</td>
+          <td>No</td>
+          <td>Create Parcel Folder (name), Assign Fields (StreetNumber), Email body</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>streetAddress</code></td>
+          <td>Input parameter</td>
+          <td>No</td>
+          <td>Create Parcel Folder (name + path), Assign Fields (StreetName), Email body</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>streetLetter</code></td>
+          <td>Input parameter</td>
+          <td>No</td>
+          <td>Create Parcel Folder (path: <code>\Parcels\%(streetLetter)\</code>)</td>
+          <td>Only used for folder path routing</td>
+        </tr>
+        <tr>
+          <td><code>emailAddress</code></td>
+          <td>Input parameter</td>
+          <td>No</td>
+          <td>Not consumed by any activity</td>
+          <td>⚠️ Declared but unused — emails are hard-coded to a fixed address</td>
+        </tr>
+        <tr>
+          <td><code>linkedParcelEntryID</code></td>
+          <td>Input parameter</td>
+          <td>No</td>
+          <td>Not consumed by any activity</td>
+          <td>Reserved for future linking logic</td>
+        </tr>
+        <tr>
+          <td><code>tokFolders</code></td>
+          <td>Create Tokens (initialized empty)</td>
+          <td>Yes (append)</td>
+          <td>Not consumed by any activity</td>
+          <td>Likely reserved for future subfolder list tracking</td>
+        </tr>
+        <tr>
+          <td><code>CreateParcelFolderLIVE_OutputEntry_ID</code></td>
+          <td>Create Parcel Folder - LIVE (output)</td>
+          <td>No</td>
+          <td>Email - Parcel Created (folder link)</td>
+          <td>Auto-generated Laserfiche entry ID</td>
+        </tr>
+        <tr>
+          <td><code>CreateParcelFolderLIVE_OutputEntry_FullPath</code></td>
+          <td>Create Parcel Folder - LIVE (output)</td>
+          <td>No</td>
+          <td>All 7 subfolder Create Entry activities</td>
+          <td>Used as parent path for all subfolders</td>
+        </tr>
+        <tr>
+          <td><code>SearchforSBLinInactive_Result Count</code></td>
+          <td>Search for SBL in Inactive (output)</td>
+          <td>No</td>
+          <td>Conditional Decision (branch condition)</td>
+          <td>0 = doesn't exist; &gt;0 = already exists in inactive archive</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- FIELDS -->
+    <div class="sec-head" id="fields">
+      <span class="sec-tag blue">Reference</span>
+      <h2>Field Inventory</h2>
+    </div>
+
+    <table>
+      <thead><tr><th>Field</th><th>Type</th><th>Template</th><th>Operation</th><th>Value Source</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>ParcelID</code></td>
+          <td>String (max 40)</td>
+          <td>Properties</td>
+          <td>Read (search condition); Written (Assign Fields)</td>
+          <td>Read from <code>%(parcelID)</code></td>
+        </tr>
+        <tr>
+          <td><code>ParcelStatus</code></td>
+          <td>List</td>
+          <td>Properties</td>
+          <td>Written</td>
+          <td>Hardcoded: <code>Active</code></td>
+        </tr>
+        <tr>
+          <td><code>StreetName</code></td>
+          <td>String</td>
+          <td>Properties</td>
+          <td>Written</td>
+          <td>From <code>%(streetAddress)</code></td>
+        </tr>
+        <tr>
+          <td><code>StreetNumber</code></td>
+          <td>String</td>
+          <td>Properties</td>
+          <td>Written</td>
+          <td>From <code>%(streetNumber)</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <div class="ci">⚠️</div>
+      <div class="cb">
+        <div class="ct">ParcelStatus is always set to "Active"</div>
+        <p>The workflow hardcodes <code>ParcelStatus = Active</code> regardless of the parcel's actual intended status. If you ever need to create a parcel that starts as Inactive, you would need to modify this workflow or update the field after creation.</p>
+      </div>
+    </div>
+
+    <!-- FOLDER STRUCTURE -->
+    <div class="sec-head" id="folders">
+      <span class="sec-tag blue">Reference</span>
+      <h2>Folder Structure</h2>
+    </div>
+
+    <p>The workflow creates the following structure on every successful run. The path components are built from input parameters.</p>
+
+    <h4>Path Formula</h4>
+    <pre><code><span class="c"># Parent path (created if missing):</span>
+\Parcels\<span class="v">%(streetLetter)</span>\<span class="v">%(streetAddress)</span>\
+
+<span class="c"># Root parcel folder name:</span>
+<span class="v">%(streetNumber)</span> <span class="v">%(streetAddress)</span> <span class="v">%(parcelID)</span>
+
+<span class="c"># Concrete example:</span>
+\Parcels\M\MAPLE AVE\100 MAPLE AVE 11.07.23\</code></pre>
+
+    <h4>Full Folder Tree</h4>
+    <div class="ftree">
+<span class="root">\Parcels\%(streetLetter)\%(streetAddress)\%(streetNumber) %(streetAddress) %(parcelID)\</span>
+<span class="br">├── </span><span class="fx">Assessor</span><span class="note">⊘ Read Only group: all rights DENIED</span>
+<span class="br">├── </span><span class="fd">Building</span><span class="note">inherits parent permissions</span>
+<span class="br">├── </span><span class="fx">Engineering</span><span class="note">⊘ Read Only group: all rights DENIED</span>
+<span class="br">├── </span><span class="fx">Photos</span><span class="note">⊘ Read Only group: all rights DENIED</span>
+<span class="br">├── </span><span class="fx">Planning</span><span class="note">⊘ Read Only group: all rights DENIED</span>
+<span class="br">├── </span><span class="fd">Tax Bills</span><span class="note">inherits parent permissions</span>
+<span class="br">└── </span><span class="fx">Water</span><span class="note">⊘ Read Only group: all rights DENIED</span>
+    </div>
+
+    <div class="callout info">
+      <div class="ci">ℹ️</div>
+      <div class="cb">
+        <div class="ct">Intermediate folders are created automatically</div>
+        <p>The <code>Validation="CreateIt"</code> flag means the letter folder (<code>\Parcels\M\</code>) and street name folder (<code>MAPLE AVE\</code>) are created automatically if they don't already exist. No pre-setup is required.</p>
+      </div>
+    </div>
+
+    <!-- PERMISSIONS -->
+    <div class="sec-head" id="permissions">
+      <span class="sec-tag blue">Reference</span>
+      <h2>Permissions Model</h2>
+    </div>
+
+    <p>The workflow sets permissions only on certain subfolders — those considered restricted to their respective departments. The ACE model used is an explicit <strong>deny</strong> entry that overrides inherited read access.</p>
+
+    <h4>ACE Configuration (all Assign Rights activities)</h4>
+    <pre><code>Trustee:    "Read Only" (Laserfiche group)
+Ace:        3  → Deny ACE
+AddRights:  true  → add this ACE to the entry
+Inherit:    true  → child entries also inherit this deny
+Rights:     All 20 rights set to Access="false"</code></pre>
+
+    <div class="callout warn">
+      <div class="ci">⚠️</div>
+      <div class="cb">
+        <div class="ct">Deny ACEs override Allow ACEs in Laserfiche</div>
+        <p>In Laserfiche's access model, an explicit Deny always wins over an Allow (even one inherited from a parent). If a user is a member of the "Read Only" group, they will be blocked from Assessor, Engineering, Photos, Planning, and Water subfolders even if they have other group memberships that grant access — unless those memberships have an explicit Allow that specifically overrides this deny, which is uncommon.</p>
+      </div>
+    </div>
+
+    <div class="rights-grid">
+      <div class="rights-card">
+        <div class="rights-folder">📁 Assessor</div>
+        <div class="rights-trustee">Trustee: Read Only (group)</div>
+        <div class="rights-status deny">⊘ All rights denied — inheritable</div>
+      </div>
+      <div class="rights-card">
+        <div class="rights-folder">📁 Building</div>
+        <div class="rights-trustee">No ACE set by workflow</div>
+        <div class="rights-status inherit">✓ Inherits from parent parcel folder</div>
+      </div>
+      <div class="rights-card">
+        <div class="rights-folder">📁 Engineering</div>
+        <div class="rights-trustee">Trustee: Read Only (group)</div>
+        <div class="rights-status deny">⊘ All rights denied — inheritable</div>
+      </div>
+      <div class="rights-card">
+        <div class="rights-folder">📁 Photos</div>
+        <div class="rights-trustee">Trustee: Read Only (group)</div>
+        <div class="rights-status deny">⊘ All rights denied — inheritable</div>
+      </div>
+      <div class="rights-card">
+        <div class="rights-folder">📁 Planning</div>
+        <div class="rights-trustee">Trustee: Read Only (group)</div>
+        <div class="rights-status deny">⊘ All rights denied — inheritable</div>
+      </div>
+      <div class="rights-card">
+        <div class="rights-folder">📁 Tax Bills</div>
+        <div class="rights-trustee">No ACE set by workflow</div>
+        <div class="rights-status inherit">✓ Inherits from parent parcel folder</div>
+      </div>
+      <div class="rights-card" style="grid-column: 1;">
+        <div class="rights-folder">📁 Water</div>
+        <div class="rights-trustee">Trustee: Read Only (group)</div>
+        <div class="rights-status deny">⊘ All rights denied — inheritable</div>
+      </div>
+    </div>
+
+    <!-- EMAIL -->
+    <div class="sec-head" id="email">
+      <span class="sec-tag blue">Reference</span>
+      <h2>Email Notifications</h2>
+    </div>
+
+    <div class="callout warn">
+      <div class="ci">⚠️</div>
+      <div class="cb">
+        <div class="ct">%(emailAddress) parameter is not used by either email activity</div>
+        <p>Both email activities hard-code recipients rather than using the <code>%(emailAddress)</code> input parameter. If you want notification to go to the form submitter, you will need to update both email activities to reference <code>%(emailAddress)</code> in their To field.</p>
+      </div>
+    </div>
+
+    <h3>Email 1: Parcel Created Successfully</h3>
+    <table>
+      <tbody>
+        <tr><td>Activity</td><td>Email - Parcel Created</td></tr>
+        <tr><td>Status</td><td><span class="badge on">Enabled</span></td></tr>
+        <tr><td>To</td><td><code>email@email.com</code> (hardcoded)</td></tr>
+        <tr><td>Subject</td><td><code>Parcel Created! %(parcelID)</code></td></tr>
+        <tr><td>Body</td><td>Parcel ID, street address, and a direct Laserfiche URL using the new folder's entry ID</td></tr>
+        <tr><td>Folder link format</td><td><code>https://app.laserfiche.com/laserfiche/browse.aspx?repo=r-xxxxxxxx&amp;customerId=687136668#?id=%(CreateParcelFolderLIVE_OutputEntry_ID)</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Email 2: Parcel Already Exists (Not Created)</h3>
+    <table>
+      <tbody>
+        <tr><td>Activity</td><td>Send Email - Parcel Not Created</td></tr>
+        <tr><td>Status</td><td><span class="badge on">Enabled</span></td></tr>
+        <tr><td>To</td><td><em>Empty</em> — no direct recipient</td></tr>
+        <tr><td>BCC</td><td><code>email@email.com</code></td></tr>
+        <tr><td>Subject</td><td><code>Parcel Created! %(parcelID)</code> — ⚠️ subject is misleading; body clarifies it was NOT created</td></tr>
+        <tr><td>Body</td><td>"Your parcel has NOT been created because it already exists!" + Parcel ID and address</td></tr>
+      </tbody>
+    </table>
+
+    <!-- TROUBLESHOOTING -->
+    <div class="sec-head" id="ts-noparcel">
+      <span class="sec-tag amber">Troubleshooting</span>
+      <h2>Common Issues</h2>
+    </div>
+
+    <div class="trouble-item" id="ts-noparcel">
+      <div class="trouble-q">Received "Parcel NOT created because it already exists" — but I can't find it in the active parcels.</div>
+      <div class="trouble-a">
+        The duplicate check searches specifically in <code>\Parcels\Z - INACTIVE BY SBL</code>, not in the live <code>\Parcels\</code> tree. The parcel exists in the <strong>inactive archive</strong>, not in active parcels.
+        <ul>
+          <li>Search in Laserfiche for the SBL under <code>\Parcels\Z - INACTIVE BY SBL</code> to find the existing record.</li>
+          <li>If the parcel should be activated, update its <code>ParcelStatus</code> field to <code>Active</code> and move it to the correct live location — do not run this workflow again, or you'll hit the same block.</li>
+          <li>If the inactive record is stale/incorrect, it may need to be deleted or reclassified before the new parcel can be created via this workflow.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="trouble-item" id="ts-nofolder">
+      <div class="trouble-q">The workflow completed but the parcel folder wasn't created — no email received either.</div>
+      <div class="trouble-a">
+        This most likely means the workflow failed silently before reaching the Create Parcel Folder activity. Check:
+        <ul>
+          <li><strong>Workflow instance log</strong> in Laserfiche Administration Console → look for faulted activities or exceptions.</li>
+          <li><strong>Input parameters</strong> — if <code>%(parcelID)</code>, <code>%(streetLetter)</code>, or <code>%(streetAddress)</code> were empty or null when passed in, folder creation may have succeeded with a blank path, then failed on the write.</li>
+          <li><strong>Permissions on \Parcels\</strong> — the workflow account needs Create permission on the target path. If the letter subfolder (e.g., <code>\Parcels\M\</code>) already exists but the workflow account lacks write access, the <code>CreateIt</code> validation will fail.</li>
+          <li><strong>Duplicate folder name</strong> — if a folder with the exact same name already exists at that path, Laserfiche will error unless <code>AutoRename</code> is set (it isn't in this workflow). Check if an identically-named folder exists.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="trouble-item" id="ts-perms">
+      <div class="trouble-q">A user who should have access to a subfolder (e.g., Engineering) is being denied.</div>
+      <div class="trouble-a">
+        Five subfolders have an explicit DENY ACE for the "Read Only" group applied by this workflow. In Laserfiche, deny ACEs override allow ACEs.
+        <ul>
+          <li>If the user is a member of "Read Only," they will be blocked even if they are also a member of another group with explicit allow rights.</li>
+          <li>To grant access, you can either: (a) remove the user from the "Read Only" group, (b) remove the deny ACE from the specific subfolder in Laserfiche Security, or (c) modify the workflow to not add the deny ACE for that folder.</li>
+          <li>To check what ACEs are on a folder: right-click the folder in Laserfiche → Properties → Security. Look for any red X entries for "Read Only."</li>
+          <li><strong>Note:</strong> Building and Tax Bills have no deny ACEs added by this workflow — they inherit from the parent parcel folder. If a user can't access those, check the parent folder's security settings instead.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="trouble-item" id="ts-email">
+      <div class="trouble-q">No confirmation email was received after a parcel was successfully created.</div>
+      <div class="trouble-a">
+        Both email activities send to a hard-coded address (<code>email@email.com</code>), not to the <code>%(emailAddress)</code> input parameter.
+        <ul>
+          <li>If you expect email at a different address, the workflow needs to be updated — edit the "Email - Parcel Created" activity and change the To field to <code>%(emailAddress)</code>.</li>
+          <li>Check that Laserfiche's SMTP server configuration is working by testing with another workflow that sends email.</li>
+          <li>Check the workflow instance log to confirm the Email activity ran without faulting.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="trouble-item" id="ts-params">
+      <div class="trouble-q">Folders were created with blank or malformed names (e.g., a folder named just the SBL with no street info).</div>
+      <div class="trouble-a">
+        The folder name is assembled from three tokens: <code>%(streetNumber) %(streetAddress) %(parcelID)</code>. If any of these were empty when passed in, the folder name will have blank segments or extra spaces.
+        <ul>
+          <li>The calling workflow or form is responsible for ensuring all parameters are non-empty before invoking this sub-workflow. Add validation at the source (the form or parent workflow) to require all fields.</li>
+          <li>If a malformed folder was already created, rename it manually in Laserfiche and update the <code>StreetNumber</code> and <code>StreetName</code> field values to match.</li>
+          <li>Similarly, <code>%(streetLetter)</code> controls the top-level routing path. An empty letter will create a folder directly under <code>\Parcels\\</code> with a blank subfolder name — check <code>\Parcels\</code> for any unnamed subfolders if this happens.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div class="ci">💡</div>
+      <div class="cb">
+        <div class="ct">Known items to review / improve</div>
+        <p>1. The "Parcel Not Created" email subject says "Parcel Created!" — this should be corrected to avoid confusion.<br>
+        2. The <code>%(emailAddress)</code> parameter is declared but unused — both email activities should reference it for proper notification routing.<br>
+        3. <code>tokFolders</code> and <code>%(linkedParcelEntryID)</code> are initialized/declared but not consumed — document their intended purpose or remove if no longer needed.</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>LFDocs — Technical Reference · ASSR_CreateNewParcel.wfi</span>
+      <span>Last modified: June 30, 2025</span>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const links = document.querySelectorAll('.sb-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const id = e.target.id;
+      const match = document.querySelector(`.sb-link[href="#${id}"]`);
+      if (match) match.classList.add('active');
+    }
+  });
+}, { rootMargin: '-10% 0px -80% 0px' });
+document.querySelectorAll('[id]').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

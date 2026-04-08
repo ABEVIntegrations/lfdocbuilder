@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create New Parcel — User Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #12100e;
+      --ink-2: #3d3830;
+      --ink-3: #7a7266;
+      --cream: #faf8f4;
+      --cream-2: #f2efe8;
+      --cream-3: #e8e3d8;
+      --gold: #b8860b;
+      --gold-light: #f5f0dc;
+      --gold-mid: #d4aa3a;
+      --green: #2d6a4f;
+      --green-light: #eaf3ee;
+      --red: #8b2020;
+      --red-light: #fdf0f0;
+      --amber: #92400e;
+      --amber-light: #fef3c7;
+      --rule: #d8d2c4;
+      --shadow: 0 2px 12px rgba(18,16,14,0.07);
+      --shadow-lg: 0 8px 40px rgba(18,16,14,0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── Page wrapper ── */
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 64px 40px 80px;
+    }
+
+    /* ── Header ── */
+    .header {
+      margin-bottom: 56px;
+      padding-bottom: 40px;
+      border-bottom: 2px solid var(--rule);
+    }
+
+    .header-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .eyebrow-tag {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold-mid);
+      background: var(--gold-light);
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
+    .eyebrow-rule {
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(36px, 5vw, 52px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .header-sub {
+      font-size: 16px;
+      color: var(--ink-2);
+      max-width: 520px;
+      line-height: 1.65;
+    }
+
+    /* ── Quick facts strip ── */
+    .facts-strip {
+      display: flex;
+      gap: 0;
+      background: var(--ink);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 52px;
+    }
+    .fact {
+      flex: 1;
+      padding: 20px 24px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .fact:last-child { border-right: none; }
+    .fact-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 5px;
+    }
+    .fact-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      line-height: 1.35;
+    }
+    .fact-value.gold { color: var(--gold-mid); }
+
+    /* ── Section headings ── */
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Summary block ── */
+    .summary-block {
+      background: var(--cream-2);
+      border: 1px solid var(--rule);
+      border-left: 4px solid var(--gold-mid);
+      border-radius: 0 10px 10px 0;
+      padding: 24px 28px;
+      margin-bottom: 48px;
+      font-size: 16px;
+      color: var(--ink-2);
+      line-height: 1.75;
+    }
+    .summary-block strong { color: var(--ink); }
+
+    /* ── What you provide ── */
+    .inputs-section { margin-bottom: 48px; }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .input-card {
+      background: var(--cream-2);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 16px 18px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .input-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold-mid);
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+    .input-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+    .input-desc {
+      font-size: 13px;
+      color: var(--ink-3);
+    }
+    .input-example {
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--gold);
+      margin-top: 4px;
+      background: var(--gold-light);
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* ── Steps ── */
+    .steps-section { margin-bottom: 48px; }
+
+    .step-list { display: flex; flex-direction: column; gap: 0; }
+    .step-item {
+      display: flex;
+      gap: 20px;
+      position: relative;
+    }
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 36px;
+      bottom: 0;
+      width: 1px;
+      background: var(--rule);
+    }
+    .step-num-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Fraunces', serif;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .step-body {
+      padding-bottom: 28px;
+      flex: 1;
+    }
+    .step-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink);
+      margin-bottom: 4px;
+      margin-top: 4px;
+    }
+    .step-desc {
+      font-size: 14px;
+      color: var(--ink-2);
+      line-height: 1.65;
+    }
+
+    /* ── What gets created ── */
+    .created-section { margin-bottom: 48px; }
+
+    .folder-tree {
+      background: #1a1714;
+      border-radius: 12px;
+      padding: 24px 28px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #c9c3b8;
+      line-height: 2;
+    }
+    .folder-tree .root { color: var(--gold-mid); font-weight: 700; }
+    .folder-tree .branch { color: #7a7266; }
+    .folder-tree .folder { color: #c9c3b8; }
+    .folder-tree .restricted {
+      color: #e06060;
+    }
+    .folder-tree .note {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      color: #5a5248;
+      margin-left: 8px;
+    }
+
+    /* ── Outcomes ── */
+    .outcomes { display: flex; flex-direction: column; gap: 12px; margin-bottom: 48px; }
+    .outcome {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 16px 18px;
+      border-radius: 10px;
+      border: 1px solid;
+    }
+    .outcome.success {
+      background: var(--green-light);
+      border-color: #b7dac6;
+    }
+    .outcome.warn {
+      background: var(--amber-light);
+      border-color: #f0c070;
+    }
+    .outcome-icon { font-size: 18px; flex-shrink: 0; }
+    .outcome-title { font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+    .outcome.success .outcome-title { color: var(--green); }
+    .outcome.warn .outcome-title { color: var(--amber); }
+    .outcome-body { font-size: 14px; color: var(--ink-2); }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--ink-3);
+    }
+    .footer-brand {
+      font-family: 'Fraunces', serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-2);
+    }
+    .footer-brand span { color: var(--gold); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .header { animation: fadeUp 0.5s ease both; }
+    .facts-strip { animation: fadeUp 0.5s 0.1s ease both; }
+    .summary-block { animation: fadeUp 0.5s 0.15s ease both; }
+    .inputs-section { animation: fadeUp 0.5s 0.2s ease both; }
+    .steps-section { animation: fadeUp 0.5s 0.25s ease both; }
+    .created-section { animation: fadeUp 0.5s 0.3s ease both; }
+    .outcomes { animation: fadeUp 0.5s 0.35s ease both; }
+
+    @media (max-width: 600px) {
+      .page { padding: 40px 20px 60px; }
+      .input-grid { grid-template-columns: 1fr; }
+      .facts-strip { flex-direction: column; }
+      .fact { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-eyebrow">
+      <span class="eyebrow-tag">Assessor · Workflow Guide</span>
+      <span class="eyebrow-rule"></span>
+    </div>
+    <h1>Create <em>New Parcel</em></h1>
+    <p class="header-sub">A quick reference for what this workflow does, what it needs from you, and what to expect when it runs.</p>
+  </header>
+
+  <!-- Quick Facts -->
+  <div class="facts-strip">
+    <div class="fact">
+      <div class="fact-label">Triggered by</div>
+      <div class="fact-value">Another workflow or form submission</div>
+    </div>
+    <div class="fact">
+      <div class="fact-label">Repository</div>
+      <div class="fact-value gold">r-XXXXXXX</div>
+    </div>
+    <div class="fact">
+      <div class="fact-label">Status</div>
+      <div class="fact-value">Active</div>
+    </div>
+    <div class="fact">
+      <div class="fact-label">Last updated</div>
+      <div class="fact-value">June 30, 2025</div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-block">
+    When a new property parcel is added to the system, this workflow <strong>automatically builds the complete folder structure</strong> in Laserfiche — the main parcel folder, all required department subfolders, and the proper metadata — so the parcel is immediately ready to receive documents. When it's done, you'll receive a confirmation email with a direct link.
+  </div>
+
+  <!-- Inputs -->
+  <section class="inputs-section">
+    <h2>What You (or the Form) Provides</h2>
+    <p style="color:var(--ink-3);font-size:14px;margin-bottom:18px;">These six values are passed into the workflow when it starts. If you're triggering this from a form, the form collects them for you.</p>
+    <div class="input-grid">
+      <div class="input-card">
+        <div class="input-dot"></div>
+        <div>
+          <div class="input-name">Parcel ID (SBL)</div>
+          <div class="input-desc">The Section-Block-Lot identifier for this property</div>
+          <div class="input-example">e.g. 11.07.23</div>
+        </div>
+      </div>
+      <div class="input-card">
+        <div class="input-dot"></div>
+        <div>
+          <div class="input-name">Street Number</div>
+          <div class="input-desc">The house / building number on the street</div>
+          <div class="input-example">e.g. 100</div>
+        </div>
+      </div>
+      <div class="input-card">
+        <div class="input-dot"></div>
+        <div>
+          <div class="input-name">Street Address (Name)</div>
+          <div class="input-desc">The street name, without the number</div>
+          <div class="input-example">e.g. MAPLE AVE</div>
+        </div>
+      </div>
+      <div class="input-card">
+        <div class="input-dot"></div>
+        <div>
+          <div class="input-name">Street Letter</div>
+          <div class="input-desc">The alphabetical grouping letter used for folder filing (A–Z)</div>
+          <div class="input-example">e.g. M</div>
+        </div>
+      </div>
+      <div class="input-card">
+        <div class="input-dot"></div>
+        <div>
+          <div class="input-name">Email Address</div>
+          <div class="input-desc">Where the confirmation email is sent when complete</div>
+          <div class="input-example">e.g. user@town.gov</div>
+        </div>
+      </div>
+      <div class="input-card">
+        <div class="input-dot"></div>
+        <div>
+          <div class="input-name">Linked Parcel Entry ID</div>
+          <div class="input-desc">Optional — links this parcel to a related existing record</div>
+          <div class="input-example">Internal Laserfiche ID</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Steps -->
+  <section class="steps-section">
+    <h2>What Happens, Step by Step</h2>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num-col"><div class="step-num">1</div></div>
+        <div class="step-body">
+          <div class="step-title">Check if the parcel already exists</div>
+          <div class="step-desc">The workflow first looks in the <strong>Inactive Parcels</strong> archive to make sure a parcel with this SBL doesn't already exist. This prevents accidental duplicates.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num-col"><div class="step-num">2</div></div>
+        <div class="step-body">
+          <div class="step-title">Create the main parcel folder</div>
+          <div class="step-desc">A new folder is created inside <code style="font-size:12px;background:var(--cream-3);padding:1px 5px;border-radius:3px;">\Parcels\[Letter]\[Street Name]\</code> and named using the street number, street name, and SBL. The <strong>Properties</strong> template is applied with the parcel's metadata.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num-col"><div class="step-num">3</div></div>
+        <div class="step-body">
+          <div class="step-title">Build all department subfolders</div>
+          <div class="step-desc">Seven subfolders are created inside the parcel folder — one for each department that may file documents against this parcel: Assessor, Building, Engineering, Photos, Planning, Tax Bills, and Water.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num-col"><div class="step-num">4</div></div>
+        <div class="step-body">
+          <div class="step-title">Set folder permissions</div>
+          <div class="step-desc">Certain subfolders (Assessor, Engineering, Photos, Planning, and Water) are restricted so that the general <strong>Read Only</strong> group cannot access them. This protects sensitive department records.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num-col"><div class="step-num">5</div></div>
+        <div class="step-body">
+          <div class="step-title">Send a confirmation email</div>
+          <div class="step-desc">An email is sent confirming the parcel was created, including the Parcel ID, address, and a <strong>direct link</strong> to the new folder in Laserfiche.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Folder Structure -->
+  <section class="created-section">
+    <h2>The Folder Structure Created</h2>
+    <p style="font-size:14px;color:var(--ink-3);margin-bottom:14px;">Every new parcel gets this exact folder layout automatically.</p>
+    <div class="folder-tree">
+<span class="root">\Parcels\[M]\MAPLE AVE\100 MAPLE AVE 11.07.23\</span>
+<span class="branch">├── </span><span class="restricted">Assessor</span><span class="note">⊘ Read Only access removed</span>
+<span class="branch">├── </span><span class="folder">Building</span>
+<span class="branch">├── </span><span class="restricted">Engineering</span><span class="note">⊘ Read Only access removed</span>
+<span class="branch">├── </span><span class="restricted">Photos</span><span class="note">⊘ Read Only access removed</span>
+<span class="branch">├── </span><span class="restricted">Planning</span><span class="note">⊘ Read Only access removed</span>
+<span class="branch">├── </span><span class="folder">Tax Bills</span>
+<span class="branch">└── </span><span class="restricted">Water</span><span class="note">⊘ Read Only access removed</span>
+    </div>
+  </section>
+
+  <!-- Outcomes -->
+  <section>
+    <h2>What to Expect</h2>
+    <div class="outcomes">
+      <div class="outcome success">
+        <div class="outcome-icon">✅</div>
+        <div>
+          <div class="outcome-title">Parcel created successfully</div>
+          <div class="outcome-body">You'll receive an email with the subject <strong>"Parcel Created! [SBL]"</strong> containing the address and a direct link to the new folder. The parcel is immediately ready to use.</div>
+        </div>
+      </div>
+      <div class="outcome warn">
+        <div class="outcome-icon">⚠️</div>
+        <div>
+          <div class="outcome-title">Parcel already exists — not created</div>
+          <div class="outcome-body">If a parcel with that SBL is found in the Inactive Parcels archive, the workflow stops and sends a notification: <strong>"Your parcel has NOT been created because it already exists."</strong> The existing record should be reviewed and reactivated instead of creating a new one.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-brand">LF<span>Docs</span></div>
+    <div>Source: ASSR_CreateNewParcel.wfi · User Guide</div>
+  </footer>
+
+</div>
+</body>
+</html>
