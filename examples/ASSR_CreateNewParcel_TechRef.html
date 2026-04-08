@@ -310,8 +310,8 @@
     <table>
       <tbody>
         <tr><td>Workflow Name</td><td><code>ASSR_CreateNewParcel</code></td></tr>
-        <tr><td>Workflow UUID</td><td><code>b1d800df-a879-46ac-9841-27a205c4369d</code></td></tr>
-        <tr><td>Canvas ID</td><td><code>b30c0102-8197-4e73-abd0-1a0f88768f77</code></td></tr>
+        <tr><td>Workflow UUID</td><td><code>00000000-0000-0000-0000-000000000000</code></td></tr>
+        <tr><td>Canvas ID</td><td><code>00000000-0000-0000-0000-000000000000</code></td></tr>
         <tr><td>Export Version</td><td>11.2.2604.1003</td></tr>
         <tr><td>Designer Version</td><td>11.0.0.138</td></tr>
         <tr><td>Enabled</td><td><span class="badge on">True</span></td></tr>
@@ -320,9 +320,9 @@
         <tr><td>Schedules</td><td>None — this is a sub-workflow, not scheduled</td></tr>
         <tr><td>Created</td><td>August 26, 2024</td></tr>
         <tr><td>Last Modified</td><td>June 30, 2025</td></tr>
-        <tr><td>Tenant ID</td><td><code>f6871366-6800-0000-0000-000000000000</code></td></tr>
+        <tr><td>Tenant ID</td><td><code>00000000-0000-0000-0000-000000000000</code></td></tr>
         <tr><td>Author</td><td>SYSTEM (Laserfiche Cloud)</td></tr>
-        <tr><td>Repository Profile UUID</td><td><code>b1d800df-a883-4107-abc0-3162a61f5627</code></td></tr>
+        <tr><td>Repository Profile UUID</td><td><code>00000000-0000-0000-0000-000000000001</code></td></tr>
         <tr><td>Repository Name</td><td>r-xxxxxxxx (r-xxxxxxxx.laserfiche.com)</td></tr>
       </tbody>
     </table>
@@ -349,42 +349,42 @@
         <div class="param-name">%(parcelID)</div>
         <div class="param-body">
           <div class="param-desc">The Section-Block-Lot identifier for the parcel. Used in the folder name, metadata assignment, and email notification.</div>
-          <div class="param-meta">UUID: <code>3486331c-6682-4b38-91b8-2e8b160c070d</code> · Style: InputFromWorkflow</div>
+          <div class="param-meta">UUID: <code>00000000-0000-0000-0000-000000000002</code> · Style: InputFromWorkflow</div>
         </div>
       </div>
       <div class="param">
         <div class="param-name">%(streetNumber)</div>
         <div class="param-body">
           <div class="param-desc">The building/house number. Combined with streetAddress to form the folder display name and StreetNumber metadata field.</div>
-          <div class="param-meta">UUID: <code>8698494a-ff9d-464a-8d5a-12433190ddaf</code></div>
+          <div class="param-meta">UUID: <code>00000000-0000-0000-0000-000000000003</code></div>
         </div>
       </div>
       <div class="param">
         <div class="param-name">%(streetAddress)</div>
         <div class="param-body">
           <div class="param-desc">The street name (without number). Used in the folder path hierarchy and the StreetName metadata field on the Properties template.</div>
-          <div class="param-meta">UUID: <code>7c56de20-5d96-4845-a2e0-f99a54bdf4c4</code></div>
+          <div class="param-meta">UUID: <code>00000000-0000-0000-0000-000000000004</code></div>
         </div>
       </div>
       <div class="param">
         <div class="param-name">%(streetLetter)</div>
         <div class="param-body">
           <div class="param-desc">Alphabetical grouping letter (A–Z). Determines which top-level letter subfolder under <code>\Parcels\</code> the parcel lands in.</div>
-          <div class="param-meta">UUID: <code>78a257c9-1413-40f4-9747-3f7c69c68e52</code></div>
+          <div class="param-meta">UUID: <code>00000000-0000-0000-0000-000000000005</code></div>
         </div>
       </div>
       <div class="param">
         <div class="param-name">%(emailAddress)</div>
         <div class="param-body">
           <div class="param-desc">The recipient for completion/failure email notifications. Passed in by the calling workflow or form.</div>
-          <div class="param-meta">UUID: <code>77f89865-decc-4ba5-8994-dad2b4698ff8</code> · Note: referenced in parameter definition but the Email activities hard-code to <code>email@email.com</code> — see Email section.</div>
+          <div class="param-meta">UUID: <code>00000000-0000-0000-0000-000000000006</code> · Note: referenced in parameter definition but the Email activities hard-code to <code>email@email.com</code> — see Email section.</div>
         </div>
       </div>
       <div class="param">
         <div class="param-name">%(linkedParcelEntryID)</div>
         <div class="param-body">
           <div class="param-desc">Optional internal Laserfiche entry ID to link this parcel to an existing record. Accepted as input but not currently consumed in any activity.</div>
-          <div class="param-meta">UUID: <code>bd3b103e-9ab4-4dbd-b890-f3acb9083341</code></div>
+          <div class="param-meta">UUID: <code>00000000-0000-0000-0000-000000000007</code></div>
         </div>
       </div>
     </div>
@@ -394,7 +394,7 @@
       <span class="sec-tag blue">Configuration</span>
       <h2>Activity Map</h2>
     </div>
-    <p>Full recursive execution tree in order. All activities use profile <code>b1d800df-a883-4107-abc0-3162a61f5627</code> (r-xxxxxxxx) unless noted.</p>
+    <p>Full recursive execution tree in order. All activities use profile <code>00000000-0000-0000-0000-000000000001</code> (r-xxxxxxxx) unless noted.</p>
 
     <div class="tree">
 
@@ -450,7 +450,7 @@
             <div class="ti">➕</div>
             <div class="tc">
               <div class="tn-name">Create Parcel Folder - LIVE</div>
-              <div class="tn-type">Create Entry — <code>CreateEntryActivityProxy</code> · Key: <code>b30c0102-81e3-44bd</code></div>
+              <div class="tn-type">Create Entry — <code>CreateEntryActivityProxy</code> · Key: <code>00000000-0000-0000</code></div>
               <div class="tn-detail">
                 Creates the root parcel folder.<br>
                 <strong>Name:</strong> <code>%(streetNumber) %(streetAddress) %(parcelID)</code><br>
@@ -881,7 +881,7 @@ Rights:     All 20 rights set to Access="false"</code></pre>
         <tr><td>To</td><td><code>email@email.com</code> (hardcoded)</td></tr>
         <tr><td>Subject</td><td><code>Parcel Created! %(parcelID)</code></td></tr>
         <tr><td>Body</td><td>Parcel ID, street address, and a direct Laserfiche URL using the new folder's entry ID</td></tr>
-        <tr><td>Folder link format</td><td><code>https://app.laserfiche.com/laserfiche/browse.aspx?repo=r-xxxxxxxx&amp;customerId=687136668#?id=%(CreateParcelFolderLIVE_OutputEntry_ID)</code></td></tr>
+        <tr><td>Folder link format</td><td><code>https://app.laserfiche.com/laserfiche/browse.aspx?repo=r-xxxxxxxx&amp;customerId=000000000#?id=%(CreateParcelFolderLIVE_OutputEntry_ID)</code></td></tr>
       </tbody>
     </table>
 
