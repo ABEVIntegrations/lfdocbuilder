@@ -1,0 +1,9 @@
+# Read by Repo Radar. Edit freely; the dashboard re-syncs on a schedule.
+name: lfdocbuilder
+status: scaffold        # idea | scaffold | building | prod | shelved
+revenue: none           # paying | pipeline | none
+priority: 3             # 1 = soonest, 5 = whenever
+url:
+notes: >
+  Use Claude Code to document your Laserfiche workflows.
+roadmap: []
